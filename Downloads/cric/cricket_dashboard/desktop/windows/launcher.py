@@ -6,7 +6,6 @@ import time
 import traceback
 import urllib.error
 import urllib.request
-import webbrowser
 from pathlib import Path
 
 
@@ -68,7 +67,7 @@ def _start_desktop_window(url: str) -> None:
     try:
         import webview
 
-        window = webview.create_window(
+        webview.create_window(
             "Cricket Statistics Dashboard",
             url=url,
             width=1440,
@@ -77,26 +76,15 @@ def _start_desktop_window(url: str) -> None:
         )
         webview.start()
     except Exception:
-        webbrowser.open(url)
-        try:
-            import tkinter as tk
-
-            root = tk.Tk()
-            root.title("Cricket Dashboard")
-            root.geometry("420x140")
-            root.resizable(False, False)
-            label = tk.Label(
-                root,
-                text=f"Dashboard is running at:\n{url}\n\nKeep this window open.",
-                justify="center",
-                padx=12,
-                pady=16,
-            )
-            label.pack(fill="both", expand=True)
-            root.mainloop()
-        except Exception:
-            while True:
-                time.sleep(1)
+        details = traceback.format_exc()
+        message = (
+            "Desktop window could not start.\n\n"
+            "Install Microsoft Edge WebView2 Runtime and try again.\n"
+            "https://developer.microsoft.com/microsoft-edge/webview2/\n\n"
+            f"Details:\n{details}"
+        )
+        _show_error_message(message)
+        raise RuntimeError(message)
 
 
 def main() -> None:
