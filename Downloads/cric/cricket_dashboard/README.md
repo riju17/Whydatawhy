@@ -50,3 +50,32 @@ cricket_dashboard/
 - Uses `pandas.read_excel(..., header=None)` to tolerate report-style sheets with titles above the header row.
 - Economy is recomputed when missing or zero and balls > 0 using runs / (balls/6).
 - Overs like `9.4` become 58 balls; blanks become 0.
+
+## Windows Desktop App (Best UX)
+Build a single Windows executable that runs locally/offline after installation.
+
+1. On a Windows machine, clone this repo and open `cmd` in `cricket_dashboard`.
+2. Create/install environment:
+   ```bat
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements.txt pyinstaller pywebview
+   ```
+3. Build exe:
+   ```bat
+   desktop\windows\build_exe.bat
+   ```
+4. Output:
+   - `dist\CricketDashboard\CricketDashboard.exe`
+
+Distribute the whole `dist\CricketDashboard` folder to users.
+When they run `CricketDashboard.exe`, it starts the dashboard locally and opens an app window.
+
+## GitHub Actions (Auto-build Windows EXE)
+This repo includes a workflow:
+- `.github/workflows/build-cricket-windows-exe.yml`
+
+How to use:
+1. Push changes to GitHub (or run workflow manually from Actions tab).
+2. Open **Actions** -> **Build Cricket Dashboard Windows EXE**.
+3. Download artifact `CricketDashboard-windows-exe` (`CricketDashboard-windows.zip`).
