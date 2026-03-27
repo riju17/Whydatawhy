@@ -24,6 +24,7 @@ pyinstaller ^
   --clean ^
   --windowed ^
   --name CricketDashboard ^
+  --copy-metadata streamlit ^
   --add-data "app.py;." ^
   --add-data "src;src" ^
   desktop\windows\launcher.py

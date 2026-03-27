@@ -37,7 +37,7 @@ jobs:
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller --noconfirm --clean --windowed --name CricketDashboard --add-data "$env:PROJECT_DIR/app.py;." --add-data "$env:PROJECT_DIR/src;src" "$env:PROJECT_DIR/desktop/windows/launcher.py"
+          pyinstaller --noconfirm --clean --windowed --name CricketDashboard --copy-metadata streamlit --add-data "$env:PROJECT_DIR/app.py;." --add-data "$env:PROJECT_DIR/src;src" "$env:PROJECT_DIR/desktop/windows/launcher.py"
 
       - name: Package EXE folder
         shell: pwsh
