@@ -3,6 +3,7 @@ import socket
 import sys
 import threading
 import time
+import traceback
 import urllib.error
 import urllib.request
 import webbrowser
@@ -22,7 +23,7 @@ def _find_free_port() -> int:
         return int(s.getsockname()[1])
 
 
-def _wait_for_server(url: str, timeout_sec: int = 45) -> bool:
+def _wait_for_server(url: str, timeout_sec: int = 120) -> bool:
     end = time.time() + timeout_sec
     while time.time() < end:
         try:
@@ -35,16 +36,32 @@ def _wait_for_server(url: str, timeout_sec: int = 45) -> bool:
     return False
 
 
-def _run_streamlit(app_path: Path, port: int) -> None:
-    from streamlit.web import bootstrap
+def _run_streamlit(app_path: Path, port: int, error_holder: dict) -> None:
+    try:
+        from streamlit.web import bootstrap
 
-    flags = {
-        "server.headless": True,
-        "server.port": port,
-        "browser.gatherUsageStats": False,
-        "server.fileWatcherType": "none",
-    }
-    bootstrap.run(str(app_path), False, [], flags)
+        flags = {
+            "server.headless": True,
+            "server.port": port,
+            "browser.gatherUsageStats": False,
+            "server.fileWatcherType": "none",
+        }
+        bootstrap.run(str(app_path), False, [], flags)
+    except Exception:
+        error_holder["traceback"] = traceback.format_exc()
+
+
+def _show_error_message(message: str) -> None:
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Cricket Dashboard Error", message)
+        root.destroy()
+    except Exception:
+        pass
 
 
 def _start_desktop_window(url: str) -> None:
@@ -88,19 +105,37 @@ def main() -> None:
         raise FileNotFoundError(f"app.py not found at {app_path}")
 
     os.environ["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
+    os.environ["STREAMLIT_SERVER_HEADLESS"] = "true"
+    os.environ["STREAMLIT_SERVER_FILE_WATCHER_TYPE"] = "none"
+
     port = _find_free_port()
     health_url = f"http://127.0.0.1:{port}/_stcore/health"
     app_url = f"http://127.0.0.1:{port}"
+    error_holder: dict = {}
 
     streamlit_thread = threading.Thread(
         target=_run_streamlit,
-        args=(app_path, port),
+        args=(app_path, port, error_holder),
         daemon=True,
     )
     streamlit_thread.start()
 
     if not _wait_for_server(health_url):
-        raise RuntimeError("Streamlit server failed to start")
+        details = error_holder.get("traceback", "")
+        log_path = Path.home() / "CricketDashboard_error.log"
+        with log_path.open("w", encoding="utf-8") as f:
+            if details:
+                f.write(details)
+            else:
+                f.write("Streamlit server failed to start within timeout.\n")
+                f.write("No Python traceback captured from launcher thread.\n")
+        message = (
+            "Streamlit server failed to start.\n\n"
+            f"Details saved to:\n{log_path}\n\n"
+            "Please share this file for diagnosis."
+        )
+        _show_error_message(message)
+        raise RuntimeError(message)
 
     try:
         _start_desktop_window(app_url)
