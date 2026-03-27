@@ -10,9 +10,8 @@ on:
 jobs:
   build-windows-exe:
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: Downloads/cric/cricket_dashboard
+    env:
+      PROJECT_DIR: Downloads/cric/cricket_dashboard
 
     steps:
       - name: Checkout
@@ -23,14 +22,22 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Verify project files
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "$env:GITHUB_WORKSPACE/$env:PROJECT_DIR" -Recurse | Select-Object -First 80 | Format-Table FullName
+          if (!(Test-Path "$env:GITHUB_WORKSPACE/$env:PROJECT_DIR/desktop/windows/launcher.py")) {
+            throw "launcher.py not found at expected path"
+          }
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt pyinstaller pywebview
+          pip install -r "$env:PROJECT_DIR/requirements.txt" pyinstaller pywebview
 
       - name: Build EXE with PyInstaller
         run: |
-          pyinstaller --noconfirm --clean --windowed --name CricketDashboard --add-data "app.py;." --add-data "src;src" desktop/windows/launcher.py
+          pyinstaller --noconfirm --clean --windowed --name CricketDashboard --add-data "$env:PROJECT_DIR/app.py;." --add-data "$env:PROJECT_DIR/src;src" "$env:PROJECT_DIR/desktop/windows/launcher.py"
 
       - name: Package EXE folder
         shell: pwsh
@@ -41,5 +48,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CricketDashboard-windows-exe
-          path: Downloads/cric/cricket_dashboard/dist/CricketDashboard-windows.zip
+          path: dist/CricketDashboard-windows.zip
           retention-days: 14
