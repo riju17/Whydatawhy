@@ -294,7 +294,7 @@ def render_profile_tab(batting, bowling):
 
     if not bat_tournament.empty:
         st.write("Batting by Tournament")
-        bat_display = bat_tournament.drop(columns=["50s", "100s"], errors="ignore").sort_values("match_type")
+        bat_display = bat_tournament.drop(columns=["50s", "100s", "not_outs", "outs"], errors="ignore").sort_values("match_type")
         for _, row in bat_display.iterrows():
             st.markdown(f"**{row.get('match_type', 'Tournament')}**")
             _render_metric_boxes(
@@ -390,7 +390,7 @@ def render_compare_tab(batting, bowling):
         bat_display = bat_summary.copy()
         if {"50s", "100s"}.intersection(set(bat_display.columns)):
             bat_display = bat_display.drop(columns=["50s", "100s"])
-        bat_display = bat_display.drop(columns=["innings", "highest_score"], errors="ignore")
+        bat_display = bat_display.drop(columns=["innings", "highest_score", "not_outs", "outs"], errors="ignore")
         st.dataframe(bat_display)
         metric = st.selectbox("Batting metric", ["runs", "average", "strike_rate"], key="bat_metric")
         fig = charts._empty_fig() if bat_summary.empty else px.bar(bat_summary, x="player_name", y=metric, title=f"Batting {metric}")
@@ -418,7 +418,10 @@ def render_compare_tab(batting, bowling):
 
     if not bat_tournament.empty:
         st.write("Batting by tournament")
-        bat_tournament_display = bat_tournament.drop(columns=["50s", "100s", "innings", "highest_score"], errors="ignore")
+        bat_tournament_display = bat_tournament.drop(
+            columns=["50s", "100s", "innings", "highest_score", "not_outs", "outs"],
+            errors="ignore",
+        )
         st.dataframe(bat_tournament_display.sort_values(["player_name", "match_type"]))
         bat_metric_options = [
             c
