@@ -44,11 +44,6 @@ def clean_batting_df(df_raw: pd.DataFrame) -> pd.DataFrame:
         df[text_col] = df[text_col].astype("string").str.strip().replace("", pd.NA)
     df["venue"] = df["venue"].fillna(df["opponent"])
 
-    how_out_series = df["how_out"].fillna("").astype(str).str.upper()
-    df["not_out"] = how_out_series.str.contains("*", regex=False, na=False) | how_out_series.str.contains(
-        "NOT OUT", regex=False, na=False
-    )
-
     # Keep rows with either a match_type or player, and at least runs or balls
     base_mask = df["match_type"].notna() | df["player_name"].notna()
     df = df[base_mask & ((df["runs"] > 0) | (df["balls"] > 0))]

@@ -121,7 +121,6 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
 
     bat_df = bat_base.merge(dismissals, on=match_keys + ["player_name"], how="left")
     bat_df["how_out"] = bat_df["how_out"].fillna("NOT OUT")
-    bat_df["not_out"] = bat_df["how_out"].astype(str).str.upper().str.contains("NOT OUT", regex=False, na=False)
     bat_df["opponent"] = bat_df["bowl_team"]
     bat_df["venue"] = bat_df["venue"].fillna(bat_df["opponent"])
     bat_df["bat_order"] = (
@@ -209,7 +208,6 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
             "fours",
             "sixes",
             "bat_order",
-            "not_out",
         ]
     ].copy()
     bowling = bowl_df[

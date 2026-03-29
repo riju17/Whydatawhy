@@ -96,7 +96,6 @@ def _build_batting(df, player, match_type, team, category, matches, date, runs, 
     out["fours"] = safe_numeric(fours)
     out["sixes"] = safe_numeric(sixes)
     out["bat_order"] = 0
-    out["not_out"] = False
     out["player_name"] = out["player_name"].ffill().astype("string").str.strip().replace("", pd.NA)
     out["match_type"] = out["match_type"].astype("string").str.strip().replace("", pd.NA)
     out["franchise"] = out["franchise"].astype("string").str.strip().replace("", pd.NA)

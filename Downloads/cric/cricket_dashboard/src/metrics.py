@@ -30,19 +30,7 @@ def summarize_batting(df: pd.DataFrame) -> pd.DataFrame:
         balls = group["balls"].sum()
         fours = group["fours"].sum()
         sixes = group["sixes"].sum()
-        not_out_series = pd.to_numeric(group.get("not_out", pd.Series([0] * len(group))), errors="coerce")
-        has_not_out_detail = ("not_out" in group.columns and group["not_out"].notna().any()) or (
-            "how_out" in group.columns and group["how_out"].notna().any()
-        )
-        not_outs = not_out_series.fillna(0).sum()
-        # Summary sheets don't carry dismissal detail; fallback to runs per reported match.
-        if has_not_out_detail:
-            outs = max(innings - not_outs, 0)
-        elif matches > 0:
-            outs = matches
-        else:
-            outs = max(innings - not_outs, 0)
-        average = runs / outs if outs else None
+        average = runs / innings if innings else None
         strike_rate = (runs / balls * 100) if balls else None
         highest = group["runs"].max()
         fifties = (group["runs"] >= 50).sum()
@@ -55,8 +43,6 @@ def summarize_batting(df: pd.DataFrame) -> pd.DataFrame:
                 "balls": balls,
                 "fours": fours,
                 "sixes": sixes,
-                "not_outs": not_outs,
-                "outs": outs,
                 "average": average,
                 "strike_rate": strike_rate,
                 "highest_score": highest,
