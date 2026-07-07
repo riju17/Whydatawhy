@@ -21,25 +21,25 @@ def inject_sporty_theme():
         """
         <style>
         :root {
-            --cheetah-black: #111117;
-            --cheetah-panel: rgba(255, 255, 255, 0.84);
-            --cheetah-surface: rgba(255, 255, 255, 0.72);
-            --cheetah-surface-strong: rgba(255, 255, 255, 0.9);
+            --cheetah-black: #07070b;
+            --cheetah-panel: rgba(13, 12, 18, 0.88);
+            --cheetah-surface: rgba(245, 241, 234, 0.08);
+            --cheetah-surface-strong: rgba(245, 241, 234, 0.12);
             --cheetah-red: #ff1b5c;
             --cheetah-red-deep: #b60031;
             --cheetah-gold: #f5b333;
             --cheetah-gold-deep: #c97d11;
-            --cheetah-white: #ffffff;
-            --cheetah-ink: #191821;
-            --cheetah-border: rgba(182, 0, 49, 0.22);
-            --cheetah-glow: rgba(245, 179, 51, 0.18);
+            --cheetah-white: #f5f1ea;
+            --cheetah-ink: #111117;
+            --cheetah-border: rgba(255, 27, 92, 0.35);
+            --cheetah-glow: rgba(245, 179, 51, 0.22);
         }
         .stApp {
             background:
-                radial-gradient(circle at top left, rgba(255, 27, 92, 0.12), transparent 26%),
-                radial-gradient(circle at top right, rgba(245, 179, 51, 0.16), transparent 24%),
-                linear-gradient(160deg, #fffaf4 0%, #fff4eb 44%, #f8f1e8 100%);
-            color: var(--cheetah-ink);
+                radial-gradient(circle at top left, rgba(255, 27, 92, 0.20), transparent 28%),
+                radial-gradient(circle at top right, rgba(245, 179, 51, 0.18), transparent 26%),
+                linear-gradient(160deg, #111018 0%, #07070b 56%, #100910 100%);
+            color: var(--cheetah-white);
         }
         .stApp main {
             background: transparent;
@@ -52,7 +52,7 @@ def inject_sporty_theme():
             max-width: 100% !important;
         }
         h1, h2, h3, .stMarkdown p, .stCaption, .stText, label, .stSelectbox label, .stMultiSelect label, .stDateInput label {
-            color: var(--cheetah-ink) !important;
+            color: var(--cheetah-white) !important;
             letter-spacing: 0.3px;
         }
         h1 {
@@ -70,15 +70,15 @@ def inject_sporty_theme():
         .stTabs [data-baseweb="tab-list"] {
             gap: 14px;
             padding: 10px 10px 6px;
-            background: rgba(255, 255, 255, 0.78);
+            background: rgba(10, 10, 14, 0.76);
             border-radius: 12px;
             border: 1px solid var(--cheetah-border);
-            box-shadow: 0 16px 36px rgba(88, 33, 51, 0.10);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.30);
             overflow-x: auto;
         }
         .stTabs [data-baseweb="tab"] {
             border-radius: 10px;
-            color: var(--cheetah-ink);
+            color: var(--cheetah-white);
             font-weight: 800;
             text-transform: uppercase;
             padding: 0.6rem 1rem;
@@ -88,24 +88,24 @@ def inject_sporty_theme():
         .stTabs [aria-selected="true"] {
             background: linear-gradient(135deg, var(--cheetah-red), var(--cheetah-red-deep)) !important;
             color: var(--cheetah-white) !important;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
         }
         .stMetric {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(250, 244, 238, 0.94));
+            background: linear-gradient(180deg, rgba(24, 22, 30, 0.96), rgba(13, 12, 18, 0.96));
             border: 1px solid var(--cheetah-border);
             border-radius: 14px;
             padding: 12px 16px;
-            box-shadow: 0 12px 28px rgba(88, 33, 51, 0.10);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
         }
         .stDataFrame, .stAlert, [data-testid="stFileUploader"] {
             background: var(--cheetah-panel);
-            border: 1px solid rgba(182, 0, 49, 0.18);
+            border: 1px solid rgba(245, 179, 51, 0.20);
             border-radius: 12px;
-            box-shadow: 0 18px 44px rgba(88, 33, 51, 0.10);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.25);
         }
         [data-testid="stFileUploader"] {
-            background: rgba(255, 255, 255, 0.84) !important;
-            border: 1px solid rgba(182, 0, 49, 0.18) !important;
+            background: rgba(10, 10, 14, 0.78) !important;
+            border: 1px solid rgba(245, 179, 51, 0.24) !important;
             border-radius: 14px !important;
             padding: 0.7rem 0.7rem 0.5rem !important;
             margin-top: 0.4rem;
@@ -117,10 +117,10 @@ def inject_sporty_theme():
         [data-testid="stFileUploaderDropzone"],
         [data-testid="stFileUploaderDropzoneContainer"],
         [data-testid="stFileUploaderDropzone"] > div {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 244, 238, 0.84)) !important;
-            border: 1px solid rgba(182, 0, 49, 0.16) !important;
+            background: linear-gradient(180deg, rgba(245, 241, 234, 0.07), rgba(245, 241, 234, 0.03)) !important;
+            border: 1px solid rgba(245, 179, 51, 0.22) !important;
             border-radius: 12px !important;
-            color: var(--cheetah-ink) !important;
+            color: var(--cheetah-white) !important;
         }
         [data-testid="stFileUploaderDropzone"] svg,
         [data-testid="stFileUploaderDropzone"] path {
@@ -132,7 +132,7 @@ def inject_sporty_theme():
         [data-testid="stFileUploader"] span,
         [data-testid="stFileUploader"] small,
         [data-testid="stFileUploader"] div {
-            color: var(--cheetah-ink) !important;
+            color: var(--cheetah-white) !important;
         }
         [data-testid="stFileUploader"] button {
             background: linear-gradient(135deg, rgba(255, 27, 92, 0.92), rgba(201, 125, 17, 0.88)) !important;
@@ -141,28 +141,28 @@ def inject_sporty_theme():
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22) !important;
         }
         div[data-testid="stDataFrame"], .stDataFrame {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 244, 238, 0.92)) !important;
-            border: 1px solid rgba(182, 0, 49, 0.18) !important;
-            box-shadow: 0 16px 38px rgba(88, 33, 51, 0.10), inset 0 1px 0 rgba(255,255,255,0.5);
+            background: linear-gradient(180deg, var(--cheetah-surface), rgba(245, 241, 234, 0.04)) !important;
+            border: 1px solid rgba(245, 179, 51, 0.22) !important;
+            box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.04);
             backdrop-filter: blur(10px);
         }
         [data-baseweb="select"] > div, .stMultiSelect [data-baseweb="select"] > div, .stDateInput > div > div {
-            border-color: rgba(182, 0, 49, 0.20) !important;
-            background: linear-gradient(180deg, var(--cheetah-surface-strong), rgba(255, 255, 255, 0.76)) !important;
-            color: var(--cheetah-ink) !important;
-            box-shadow: 0 10px 26px rgba(88, 33, 51, 0.10);
+            border-color: rgba(245, 179, 51, 0.40) !important;
+            background: linear-gradient(180deg, var(--cheetah-surface-strong), rgba(245, 241, 234, 0.06)) !important;
+            color: var(--cheetah-white) !important;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.20);
         }
         div[data-baseweb="popover"], div[data-baseweb="menu"] {
-            background: rgba(255, 255, 255, 0.98) !important;
-            border: 1px solid rgba(182, 0, 49, 0.16) !important;
-            box-shadow: 0 18px 44px rgba(88, 33, 51, 0.12) !important;
+            background: rgba(18, 16, 24, 0.98) !important;
+            border: 1px solid rgba(245, 179, 51, 0.22) !important;
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35) !important;
         }
         div[data-baseweb="option"] {
-            background: rgba(255, 255, 255, 0.01) !important;
-            color: var(--cheetah-ink) !important;
+            background: rgba(245, 241, 234, 0.03) !important;
+            color: var(--cheetah-white) !important;
         }
         div[data-baseweb="option"]:hover, div[data-baseweb="option"][aria-selected="true"] {
-            background: rgba(255, 27, 92, 0.10) !important;
+            background: rgba(255, 27, 92, 0.18) !important;
             color: var(--cheetah-white) !important;
         }
         .stButton button {
@@ -178,8 +178,8 @@ def inject_sporty_theme():
             filter: brightness(1.04);
         }
         [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, rgba(255, 250, 244, 0.98), rgba(247, 239, 231, 0.98));
-            border-right: 1px solid rgba(182, 0, 49, 0.12);
+            background: linear-gradient(180deg, rgba(10, 9, 14, 0.98), rgba(18, 15, 24, 0.98));
+            border-right: 1px solid rgba(255, 27, 92, 0.16);
         }
         [data-testid="stVerticalBlock"] {
             gap: 0.9rem;
@@ -188,14 +188,14 @@ def inject_sporty_theme():
             gap: 0.9rem;
         }
         .stCaption {
-            color: rgba(25, 24, 33, 0.72) !important;
+            color: rgba(245, 241, 234, 0.74) !important;
         }
         .stMarkdown strong {
             color: var(--cheetah-gold);
         }
         .stExpander {
-            border: 1px solid rgba(182, 0, 49, 0.14);
-            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 27, 92, 0.22);
+            background: rgba(12, 11, 17, 0.80);
             margin-top: 0.6rem;
             margin-bottom: 0.6rem;
         }

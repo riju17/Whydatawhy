@@ -14,17 +14,17 @@ SPORTY_COLORS = [
 
 def style_figure(fig):
     fig.update_layout(
-        template="plotly_white",
+        template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(255,255,255,0.92)",
-        font={"family": "Trebuchet MS, Segoe UI, sans-serif", "color": "#191821"},
-        title={"font": {"size": 18, "color": "#B60031"}},
+        plot_bgcolor="rgba(12,11,17,0.88)",
+        font={"family": "Trebuchet MS, Segoe UI, sans-serif", "color": "#F5F1EA"},
+        title={"font": {"size": 18, "color": "#F5B333"}},
         colorway=SPORTY_COLORS,
         margin={"l": 36, "r": 20, "t": 62, "b": 36},
-        legend={"bgcolor": "rgba(255,255,255,0.82)", "bordercolor": "rgba(182,0,49,0.16)", "borderwidth": 1},
+        legend={"bgcolor": "rgba(12,11,17,0.72)", "bordercolor": "rgba(255,27,92,0.42)", "borderwidth": 1},
     )
-    fig.update_xaxes(gridcolor="rgba(182,0,49,0.10)", zeroline=False, linecolor="rgba(25,24,33,0.18)")
-    fig.update_yaxes(gridcolor="rgba(245,179,51,0.14)", zeroline=False, linecolor="rgba(25,24,33,0.18)")
+    fig.update_xaxes(gridcolor="rgba(245,179,51,0.12)", zeroline=False, linecolor="rgba(245,241,234,0.25)")
+    fig.update_yaxes(gridcolor="rgba(255,27,92,0.10)", zeroline=False, linecolor="rgba(245,241,234,0.25)")
     return fig
 
 
