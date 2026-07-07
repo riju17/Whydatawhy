@@ -3,12 +3,12 @@ import pandas as pd
 
 
 SPORTY_COLORS = [
-    "#82DFE6",  # cyan ring
-    "#D8C48F",  # gold accent
-    "#EEF4FF",  # logo white
-    "#58B6D1",  # cyan deep
-    "#BFA56F",  # dark gold
-    "#94A9C6",  # cool gray-blue
+    "#FF1B5C",  # cheetah red
+    "#F5B333",  # gold accent
+    "#F5F1EA",  # logo white
+    "#B60031",  # deep red
+    "#C97D11",  # dark gold
+    "#3B3B44",  # charcoal
 ]
 
 
@@ -16,15 +16,15 @@ def style_figure(fig):
     fig.update_layout(
         template="plotly_white",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(255,255,255,0.82)",
-        font={"family": "Trebuchet MS, Segoe UI, sans-serif", "color": "#102235"},
-        title={"font": {"size": 18, "color": "#1B6B78"}},
+        plot_bgcolor="rgba(255,255,255,0.92)",
+        font={"family": "Trebuchet MS, Segoe UI, sans-serif", "color": "#191821"},
+        title={"font": {"size": 18, "color": "#B60031"}},
         colorway=SPORTY_COLORS,
         margin={"l": 36, "r": 20, "t": 62, "b": 36},
-        legend={"bgcolor": "rgba(255,255,255,0.72)", "bordercolor": "rgba(130,223,230,0.42)", "borderwidth": 1},
+        legend={"bgcolor": "rgba(255,255,255,0.82)", "bordercolor": "rgba(182,0,49,0.16)", "borderwidth": 1},
     )
-    fig.update_xaxes(gridcolor="rgba(130,223,230,0.18)", zeroline=False)
-    fig.update_yaxes(gridcolor="rgba(216,196,143,0.18)", zeroline=False)
+    fig.update_xaxes(gridcolor="rgba(182,0,49,0.10)", zeroline=False, linecolor="rgba(25,24,33,0.18)")
+    fig.update_yaxes(gridcolor="rgba(245,179,51,0.14)", zeroline=False, linecolor="rgba(25,24,33,0.18)")
     return fig
 
 

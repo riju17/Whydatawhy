@@ -1,8 +1,24 @@
-# Cricket Statistics Analysis Dashboard
+# Cricket Dashboard
 
-Python/Streamlit MVP that ingests report-style cricket Excel sheets (batting + bowling), cleans them, and provides basic analytics and charts.
+Streamlit dashboard for cricket statistics that reads a few common Excel formats, normalizes them into a single schema, and renders player and season-level analysis.
 
-## Quick start
+## What It Supports
+
+- Report-style batting and bowling sheets with headers like `BATSMAN NAME` or `BOWLER NAME`
+- Season-summary sheets such as the Assam workbook layout with `PLAYER`, `PROFICIENCY`, and `TOURNAMENT`
+- Ball-by-ball Excel exports when the report-style header is not present
+
+## Features
+
+- Upload one or more `.xlsx` files
+- Preview cleaned batting and bowling tables
+- Player profile view with filters for competition, franchise, opponent, venue, and date
+- Compare players on batting and bowling metrics
+- Match/Season view for match-style data
+- Category Priority view for ranking players by category
+- Dark cheetah-themed UI with matching charts and controls
+
+## Quick Start
 
 ```bash
 cd cricket_dashboard
@@ -12,70 +28,63 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Then open the Streamlit URL shown in the terminal.
+Then open the local Streamlit URL shown in the terminal.
 
-## How it works
-- Upload one or more Excel files. Sheets are scanned to find the header row containing `SNO.` plus `BATSMAN NAME` or `BOWLER NAME`.
-- Also supports season-summary sheets with columns like `PLAYER NAME`, `YEAR`, batting (`RUNS/BALLS/4s/6s`) and bowling (`OVER/RUNS/WICKETS/ECONOMY`) in the same sheet.
-- Rows are trimmed to the match-detail columns; summary columns on the right are ignored.
-- Player names are forward-filled across match rows; valid rows require a match type and basic stats.
-- Columns are normalized to a canonical schema (batting and bowling) with synonyms handled (e.g., `V/S`, `VS`, `VENUE`, `VANUE`).
-- Dates are parsed with day-first logic; numeric fields are coerced to numbers; overs convert to balls for bowling and economy is recomputed when missing.
+## How The Import Pipeline Works
 
-## UI
-- **Upload & Preview**: shows cleaned batting/bowling data and row counts.
-- **Player Profile**: pick a player, filter by match type/opponent/venue/date, and view KPIs and charts (runs, strike rate, wickets, economy, runs vs opponent, how-out split).
-  - For season-summary uploads, competition labels are normalized to `MPL 24`, `MPL 25`, and `JN BHAYA` for one-click per-competition analysis.
-- **Compare Players**: multi-player comparison on selectable metrics for batting and bowling.
-- **Match/Season**: aggregate view by match key (date + opponent + venue) for quick match totals.
+- Uploaded files are scanned sheet by sheet.
+- The app first tries the season-summary parser.
+- If that does not match, it falls back to report-style parsing.
+- If that also fails, it tries the ball-by-ball parser.
+- Parsed rows are cleaned into canonical batting and bowling columns.
+- Dates, overs, balls, wickets, and economy values are normalized where possible.
 
-## Project layout
-```
+## UI Tabs
+
+- **Upload & Preview**: raw cleaned batting/bowling previews and row counts
+- **Player Profile**: per-player filtered view with tournament summaries and charts
+- **Compare Players**: side-by-side batting and bowling comparison
+- **Match/Season**: match aggregation for match-style datasets
+- **Category Priority**: category-based ranking view
+
+## Project Layout
+
+```text
 cricket_dashboard/
   app.py
+  README.md
   requirements.txt
+  .streamlit/config.toml
+  desktop/
+    windows/
+      launcher.py    # local desktop wrapper around Streamlit
   src/
-    excel_block_parser.py   # header detection + per-match extraction
-    summary_sheet_parser.py # season-summary extraction (mixed batting + bowling)
-    mapping.py              # column normalization + synonym mapping
-    clean_batting.py        # canonical batting schema
-    clean_bowling.py        # canonical bowling schema
-    metrics.py              # per-player aggregates
-    charts.py               # plotly chart helpers
-    utils.py                # parsing helpers (dates, overs, numerics)
+    ball_by_ball_parser.py    # ball-by-ball workbook parsing
+    charts.py                 # Plotly chart styling and helpers
+    clean_batting.py          # batting schema cleanup
+    clean_bowling.py          # bowling schema cleanup
+    excel_block_parser.py     # report-style workbook parsing
+    mapping.py                # header normalization and synonyms
+    metrics.py                # player summaries and aggregates
+    summary_sheet_parser.py   # season-summary parsing
+    utils.py                  # dates, overs, numerics, helpers
 ```
 
+## Theme
+
+- The app uses a dark cheetah theme by default.
+- Streamlit theme colors are configured in `.streamlit/config.toml`.
+- Plotly figures are styled to match the same palette.
+
 ## Notes
+
 - Designed for Python 3.10+.
-- Uses `pandas.read_excel(..., header=None)` to tolerate report-style sheets with titles above the header row.
-- Economy is recomputed when missing or zero and balls > 0 using runs / (balls/6).
-- Overs like `9.4` become 58 balls; blanks become 0.
+- Uses `pandas.read_excel(..., header=None)` so report-style sheets with title rows are supported.
+- Overs like `9.4` are converted to balls.
+- Economy is recomputed when missing and enough bowling data is available.
 
-## Windows Desktop App (Best UX)
-Build a single Windows executable that runs locally/offline after installation.
+## Windows Desktop App
 
-1. On a Windows machine, clone this repo and open `cmd` in `cricket_dashboard`.
-2. Create/install environment:
-   ```bat
-   python -m venv .venv
-   .venv\Scripts\activate
-   pip install -r requirements.txt pyinstaller pywebview
-   ```
-3. Build exe:
-   ```bat
-   desktop\windows\build_exe.bat
-   ```
-4. Output:
-   - `dist\CricketDashboard\CricketDashboard.exe`
+The repo includes `desktop/windows/launcher.py`, which starts Streamlit locally and opens it in a desktop window using `pywebview`.
 
-Distribute the whole `dist\CricketDashboard` folder to users.
-When they run `CricketDashboard.exe`, it starts the dashboard locally and opens an app window.
-
-## GitHub Actions (Auto-build Windows EXE)
-This repo includes a workflow:
-- `.github/workflows/build-cricket-windows-exe.yml`
-
-How to use:
-1. Push changes to GitHub (or run workflow manually from Actions tab).
-2. Open **Actions** -> **Build Cricket Dashboard Windows EXE**.
-3. Download artifact `CricketDashboard-windows-exe` (`CricketDashboard-windows.zip`).
+To use it on Windows, install the desktop dependencies from `requirements.txt` plus `pywebview`, then run the launcher directly.
