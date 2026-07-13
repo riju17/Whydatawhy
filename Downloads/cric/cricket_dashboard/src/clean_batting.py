@@ -10,6 +10,7 @@ BAT_COLS = [
     "venue",
     "runs",
     "balls",
+    "dot_balls",
     "how_out",
     "fours",
     "sixes",
@@ -35,6 +36,7 @@ def clean_batting_df(df_raw: pd.DataFrame) -> pd.DataFrame:
     df["date"] = df["date"].apply(parse_date)
     df["runs"] = safe_numeric(df["runs"])
     df["balls"] = safe_numeric(df["balls"])
+    df["dot_balls"] = safe_numeric(df["dot_balls"])
     df["fours"] = safe_numeric(df["fours"])
     df["sixes"] = safe_numeric(df["sixes"])
     df["bat_order"] = safe_numeric(df["bat_order"])

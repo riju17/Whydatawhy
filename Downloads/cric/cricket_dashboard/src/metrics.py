@@ -28,6 +28,7 @@ def summarize_batting(df: pd.DataFrame) -> pd.DataFrame:
         innings = int(matches) if "matches_reported" in group.columns and matches > 0 else len(group)
         runs = group["runs"].sum()
         balls = group["balls"].sum()
+        dot_balls = group["dot_balls"].sum() if "dot_balls" in group.columns else 0
         fours = group["fours"].sum()
         sixes = group["sixes"].sum()
         average = runs / innings if innings else None
@@ -41,6 +42,7 @@ def summarize_batting(df: pd.DataFrame) -> pd.DataFrame:
                 "innings": innings,
                 "runs": runs,
                 "balls": balls,
+                "dot_balls": dot_balls,
                 "fours": fours,
                 "sixes": sixes,
                 "average": average,

@@ -84,6 +84,7 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
     df["legal_ball"] = (df["wide"] == 0) & (df["nb"] == 0)
     df["is_dot_ball"] = df["legal_ball"] & (df["run"] == 0)
     df["batter_runs"] = (df["run"] - df["wide"] - df["nb"] - df["blb"]).clip(lower=0)
+    df["is_dot_bat_ball"] = df["legal_ball"] & (df["batter_runs"] == 0)
     df["delivery_id"] = _series(df, cols, "DELIVERY ID", "").astype(str).str.strip()
     df["over_no"] = _delivery_key(df["delivery_id"])
 
@@ -102,6 +103,7 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
         .agg(
             runs=("batter_runs", "sum"),
             balls=("legal_ball", "sum"),
+            dot_balls=("is_dot_bat_ball", "sum"),
             fours=("batter_runs", lambda s: (s == 4).sum()),
             sixes=("batter_runs", lambda s: (s == 6).sum()),
             first_seq=("__seq", "min"),
@@ -185,6 +187,7 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
 
     bat_df["runs"] = _to_int_text(bat_df["runs"])
     bat_df["balls"] = _to_int_text(bat_df["balls"])
+    bat_df["dot_balls"] = _to_int_text(bat_df["dot_balls"])
     bat_df["fours"] = _to_int_text(bat_df["fours"])
     bat_df["sixes"] = _to_int_text(bat_df["sixes"])
     bat_df["bat_order"] = _to_int_text(bat_df["bat_order"])
@@ -204,6 +207,7 @@ def parse_ball_by_ball_excel(uploaded_file, sheet_name=None):
             "venue",
             "runs",
             "balls",
+            "dot_balls",
             "how_out",
             "fours",
             "sixes",

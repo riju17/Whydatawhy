@@ -431,6 +431,7 @@ def render_profile_tab(batting, bowling):
                     ("Matches", "matches"),
                     ("Runs", "runs"),
                     ("Balls", "balls"),
+                    ("Dot Balls", "dot_balls"),
                     ("4s", "fours"),
                     ("6s", "sixes"),
                     ("Average", "average"),
@@ -520,7 +521,7 @@ def render_compare_tab(batting, bowling):
             bat_display = bat_display.drop(columns=["50s", "100s"])
         bat_display = bat_display.drop(columns=["innings", "highest_score", "not_outs", "outs"], errors="ignore")
         st.dataframe(bat_display)
-        metric = st.selectbox("Batting metric", ["runs", "average", "strike_rate"], key="bat_metric")
+        metric = st.selectbox("Batting metric", ["runs", "average", "strike_rate", "fours", "sixes", "dot_balls"], key="bat_metric")
         fig = charts._empty_fig() if bat_summary.empty else px.bar(bat_summary, x="player_name", y=metric, title=f"Batting {metric}")
         fig = charts.style_figure(fig)
         st.plotly_chart(fig, use_container_width=True)
@@ -638,7 +639,7 @@ def render_match_tab(batting, bowling):
         bowl = bowl[bowl["match_key"].isin(selected)] if not bowl.empty else bowl
     st.subheader("Batting totals")
     if not bat.empty:
-        bat_agg = {c: "sum" for c in ["runs", "wickets", "balls"] if c in bat.columns}
+        bat_agg = {c: "sum" for c in ["runs", "wickets", "balls", "dot_balls"] if c in bat.columns}
         totals = bat.groupby("match_key").agg(bat_agg) if bat_agg else pd.DataFrame(index=bat["match_key"].unique())
         st.dataframe(totals)
     else:
@@ -680,7 +681,7 @@ def render_category_tab(batting, bowling):
 
     if source == "Batting":
         summary = summarize_batting(filtered)
-        metric_options = ["runs", "average", "strike_rate", "fours", "sixes", "matches"]
+        metric_options = ["runs", "average", "strike_rate", "fours", "sixes", "dot_balls", "matches"]
         default_metric = "runs"
     else:
         summary = summarize_bowling(filtered)

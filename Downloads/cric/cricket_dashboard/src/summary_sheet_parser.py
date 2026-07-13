@@ -96,7 +96,7 @@ def _text_series(series, index):
     return series.astype("string").ffill().str.strip().replace("", pd.NA)
 
 
-def _build_batting(df, player, match_type, team, category, matches, date, runs, balls, fours, sixes):
+def _build_batting(df, player, match_type, team, category, matches, date, runs, balls, dot_balls, fours, sixes):
     out = pd.DataFrame()
     out["player_name"] = player
     out["match_type"] = match_type
@@ -108,6 +108,7 @@ def _build_batting(df, player, match_type, team, category, matches, date, runs, 
     out["matches_reported"] = safe_numeric(matches)
     out["runs"] = safe_numeric(runs)
     out["balls"] = safe_numeric(balls)
+    out["dot_balls"] = safe_numeric(dot_balls)
     out["how_out"] = pd.NA
     out["fours"] = safe_numeric(fours)
     out["sixes"] = safe_numeric(sixes)
@@ -118,6 +119,8 @@ def _build_batting(df, player, match_type, team, category, matches, date, runs, 
     out["category"] = out["category"].astype("string").str.strip().replace("", pd.NA)
     out["opponent"] = out["opponent"].astype("string").str.strip().replace("", pd.NA)
     out["venue"] = out["venue"].astype("string").str.strip().replace("", pd.NA).fillna(out["opponent"])
+    for col in ["matches_reported", "runs", "balls", "dot_balls", "fours", "sixes", "bat_order"]:
+        out[col] = pd.to_numeric(out[col], errors="coerce").fillna(0).astype(int)
     mask = out["player_name"].notna()
     return out[mask].reset_index(drop=True)
 
@@ -149,6 +152,8 @@ def _build_bowling(df, player, match_type, team, category, matches, date, overs,
     out["category"] = out["category"].astype("string").str.strip().replace("", pd.NA)
     out["opponent"] = out["opponent"].astype("string").str.strip().replace("", pd.NA)
     out["venue"] = out["venue"].astype("string").str.strip().replace("", pd.NA).fillna(out["opponent"])
+    for col in ["matches_reported", "balls_bowled", "dot_balls", "runs_conceded", "maidens", "wickets"]:
+        out[col] = pd.to_numeric(out[col], errors="coerce").fillna(0).astype(int)
     mask = out["player_name"].notna()
     return out[mask].reset_index(drop=True)
 
@@ -197,9 +202,10 @@ def _parse_assam_style_summary(raw: pd.DataFrame, source_label=None):
     bat["matches_reported"] = safe_numeric(df.iloc[:, 3])
     bat["runs"] = safe_numeric(df.iloc[:, 5])
     bat["balls"] = safe_numeric(df.iloc[:, 6])
+    bat["dot_balls"] = safe_numeric(df.iloc[:, 7])
+    bat["fours"] = safe_numeric(df.iloc[:, 8])
+    bat["sixes"] = safe_numeric(df.iloc[:, 9])
     bat["how_out"] = pd.NA
-    bat["fours"] = 0
-    bat["sixes"] = 0
     bat["bat_order"] = 0
     bat["player_name"] = bat["player_name"].ffill().astype("string").str.strip().replace("", pd.NA)
     bat["match_type"] = bat["match_type"].astype("string").str.strip().replace("", pd.NA)
@@ -207,6 +213,8 @@ def _parse_assam_style_summary(raw: pd.DataFrame, source_label=None):
     bat["category"] = bat["category"].astype("string").str.strip().replace("", pd.NA)
     bat["opponent"] = bat["opponent"].astype("string").str.strip().replace("", pd.NA)
     bat["venue"] = bat["venue"].astype("string").str.strip().replace("", pd.NA)
+    for col in ["matches_reported", "runs", "balls", "dot_balls", "fours", "sixes", "bat_order"]:
+        bat[col] = pd.to_numeric(bat[col], errors="coerce").fillna(0).astype(int)
     bat = bat[mask].reset_index(drop=True)
 
     bowl = pd.DataFrame(index=index)
@@ -217,14 +225,14 @@ def _parse_assam_style_summary(raw: pd.DataFrame, source_label=None):
     bowl["opponent"] = pd.NA
     bowl["date"] = date
     bowl["venue"] = pd.NA
-    bowl["matches_reported"] = safe_numeric(df.iloc[:, 15])
-    bowl["overs_raw"] = df.iloc[:, 17]
+    bowl["matches_reported"] = safe_numeric(df.iloc[:, 18])
+    bowl["overs_raw"] = df.iloc[:, 20]
     bowl["balls_bowled"] = bowl["overs_raw"].apply(overs_to_balls)
     bowl["dot_balls"] = 0
-    bowl["runs_conceded"] = safe_numeric(df.iloc[:, 18])
-    bowl["maidens"] = safe_numeric(df.iloc[:, 19])
-    bowl["wickets"] = safe_numeric(df.iloc[:, 20])
-    bowl["economy"] = pd.to_numeric(df.iloc[:, 22], errors="coerce")
+    bowl["runs_conceded"] = safe_numeric(df.iloc[:, 21])
+    bowl["maidens"] = safe_numeric(df.iloc[:, 22])
+    bowl["wickets"] = safe_numeric(df.iloc[:, 23])
+    bowl["economy"] = pd.to_numeric(df.iloc[:, 25], errors="coerce")
     recompute_mask = bowl["economy"].isna() & (bowl["balls_bowled"] > 0)
     bowl.loc[recompute_mask, "economy"] = bowl.loc[recompute_mask].apply(
         lambda r: compute_economy(r["runs_conceded"], r["balls_bowled"]), axis=1
@@ -235,6 +243,8 @@ def _parse_assam_style_summary(raw: pd.DataFrame, source_label=None):
     bowl["category"] = bowl["category"].astype("string").str.strip().replace("", pd.NA)
     bowl["opponent"] = bowl["opponent"].astype("string").str.strip().replace("", pd.NA)
     bowl["venue"] = bowl["venue"].astype("string").str.strip().replace("", pd.NA)
+    for col in ["matches_reported", "balls_bowled", "dot_balls", "runs_conceded", "maidens", "wickets"]:
+        bowl[col] = pd.to_numeric(bowl[col], errors="coerce").fillna(0).astype(int)
     bowl = bowl[mask].reset_index(drop=True)
     return bat, bowl
 
@@ -265,10 +275,11 @@ def _parse_primary_summary(raw: pd.DataFrame):
     team_idx = _first_col(headers, {"TEAM", "TEAM NAME"})
     bat_runs_idx = _first_col_before(headers, {"RUNS", "TOTAL", "TOT"}, over_idx)
     balls_idx = _first_col_before(headers, {"BALLS"}, over_idx)
+    bat_dot_idx = _first_col_before(headers, {"DOT", "DOT BALL", "DOT BALLS", "DOTBALL", "DOTBALLS"}, over_idx)
     fours_idx = _first_col_before(headers, {"4S", "FOURS"}, over_idx)
     sixes_idx = _first_col_before(headers, {"6S", "SIXES"}, over_idx)
     bowl_runs_idx = _first_col_after(headers, {"RUNS", "RUNS GIVEN"}, over_idx)
-    dot_idx = _first_col_after(headers, {"DOT", "DOT BALL", "DOT BALLS", "DOTBALL", "DOTBALLS"}, over_idx)
+    bowl_dot_idx = _first_col_after(headers, {"DOT", "DOT BALL", "DOT BALLS", "DOTBALL", "DOTBALLS"}, over_idx)
     wickets_idx = _first_col_after(headers, {"WKT", "WKTS", "WICKETS", "W"}, over_idx)
     economy_idx = _first_col_after(headers, {"ECO", "ECONOMY", "ECON"}, over_idx)
 
@@ -296,6 +307,7 @@ def _parse_primary_summary(raw: pd.DataFrame):
         date=date,
         runs=df.iloc[:, bat_runs_idx] if bat_runs_idx is not None else 0,
         balls=df.iloc[:, balls_idx] if balls_idx is not None else 0,
+        dot_balls=df.iloc[:, bat_dot_idx] if bat_dot_idx is not None else 0,
         fours=df.iloc[:, fours_idx] if fours_idx is not None else 0,
         sixes=df.iloc[:, sixes_idx] if sixes_idx is not None else 0,
     )
@@ -308,7 +320,7 @@ def _parse_primary_summary(raw: pd.DataFrame):
         matches=matches,
         date=date,
         overs=df.iloc[:, over_idx] if over_idx is not None else 0,
-        dot_balls=df.iloc[:, dot_idx] if dot_idx is not None else 0,
+        dot_balls=df.iloc[:, bowl_dot_idx] if bowl_dot_idx is not None else 0,
         bowl_runs=df.iloc[:, bowl_runs_idx] if bowl_runs_idx is not None else 0,
         wickets=df.iloc[:, wickets_idx] if wickets_idx is not None else 0,
         economy=df.iloc[:, economy_idx] if economy_idx is not None else 0,
